@@ -1,0 +1,22 @@
+[project]
+name = "tds-project2-2025"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "21f1000737", email = "21f1000737@ds.study.iitm.ac.in" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.116.1",
+    "gunicorn>=23.0.0",
+    "python-multipart>=0.0.20",
+    "uvicorn>=0.35.0",
+]
+
+[project.scripts]
+tds-project2-2025 = "tds_project2_2025:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
