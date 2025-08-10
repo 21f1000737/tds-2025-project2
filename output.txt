@@ -1,0 +1,169 @@
+Generated Analysis Code:
+
+import pandas as pd
+import numpy as np
+import json
+import base64
+from io import BytesIO
+import matplotlib.pyplot as plt
+from PIL import Image
+from ast import literal_eval
+
+def safe_eval_json(s):
+    """
+    Some JSON subfields seem to be string representations of Python objects (using single quotes etc).
+    Try to parse them into Python objects safely.
+    """
+    if isinstance(s, dict) or isinstance(s, list):
+        return s
+    try:
+        return json.loads(s)
+    except Exception:
+        try:
+            return literal_eval(s)
+        except Exception:
+            return s
+
+def main():
+    results = []
+
+    # 1. Load sales_data.csv
+    try:
+        df = pd.read_csv('sales_data.csv')
+    except Exception as e:
+        print(json.dumps(["Error reading sales_data.csv:", str(e)]))
+        return
+
+    # Data cleaning: Convert price, quantity_sold to numeric in case of problems
+    df['price'] = pd.to_numeric(df['price'], errors='coerce')
+    df['quantity_sold'] = pd.to_numeric(df['quantity_sold'], errors='coerce')
+    df = df.dropna(subset=['price', 'quantity_sold', 'category', 'region', 'customer_id'])
+
+    # 2. Load customer_metrics.json
+    try:
+        with open('customer_metrics.json','r',encoding='utf-8') as f:
+            cust_metrics = json.load(f)
+    except Exception as e:
+        print(json.dumps(["Error reading customer_metrics.json:", str(e)]))
+        return
+    
+    # Attempt to parse subfields as python/list/dict
+    segments = safe_eval_json(cust_metrics.get('customer_segments', []))
+    reg_perf = safe_eval_json(cust_metrics.get('regional_performance', {}))
+    cat_stats = safe_eval_json(cust_metrics.get('product_categories', {}))
+    top_customers = safe_eval_json(cust_metrics.get('top_customers', []))
+
+    # 1. Total revenue across all products (sales_data.csv)
+    df['revenue'] = df['price'] * df['quantity_sold']
+    total_revenue = np.nansum(df['revenue'])
+    results.append(float(round(total_revenue, 2)))
+
+    # 2. Product category with highest average price per unit (not weighted)
+    avg_price_by_cat = df.groupby('category')['price'].mean()
+    if len(avg_price_by_cat) == 0:
+        cat_highest = None
+    else:
+        cat_highest = avg_price_by_cat.idxmax()
+    results.append(cat_highest)
+
+    # 3. Top-selling region by total quantity sold
+    region_qty = df.groupby('region')['quantity_sold'].sum()
+    if len(region_qty) == 0:
+        top_region = None
+    else:
+        top_region = region_qty.idxmax()
+    results.append(top_region)
+
+    # 4. Compare customer segment data JSON vs sales_data revenue
+    # Find total revenue per segment (from JSON) and compare sum to sales_data
+    cust_seg_total = 0
+    cust_seg_breakdown = {}
+    try:
+        for seg in segments:
+            cust_seg_total += float(seg.get('total_revenue', 0))
+            cust_seg_breakdown[seg.get('segment','?')] = float(seg.get('total_revenue', 0))
+    except Exception:
+        cust_seg_total = None
+    # Compare to CSV
+    diff = abs(total_revenue - cust_seg_total) if cust_seg_total is not None else None
+    match_result = {
+        'customer_segments_total_revenue': round(cust_seg_total,2) if cust_seg_total is not None else None,
+        'sales_data_total_revenue': round(total_revenue,2),
+        'matches': (abs(total_revenue - cust_seg_total) < 1e-2) if (cust_seg_total is not None) else False,
+        'difference': round(diff,2) if diff is not None else None
+    }
+    results.append(match_result)
+
+    # 5. Bar chart: revenue by product category from sales_data.csv as base64 data URI (<100KB)
+    # To ensure <100KB, use tight layout and small image size
+    plt.figure(figsize=(4,3), dpi=100)
+    revenue_by_cat = df.groupby('category')['revenue'].sum().sort_values(ascending=False)
+    revenue_by_cat.plot(kind='bar', color=['#2a9d8f', '#e76f51', '#264653'])
+    plt.ylabel('Revenue ($)')
+    plt.title('Revenue by Product Category')
+    plt.tight_layout()
+    buf = BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight')
+    plt.close()
+    buf.seek(0)
+    # Optionally compress with PIL
+    try:
+        img = Image.open(buf)
+        img_io = BytesIO()
+        img.save(img_io, format='PNG', optimize=True)
+        img_bytes = img_io.getvalue()
+        # if still too large, save as JPEG
+        if len(img_bytes) > 95000:
+            img_io = BytesIO()
+            img.convert('RGB').save(img_io, format='JPEG', quality=80)
+            img_bytes = img_io.getvalue()
+    except Exception:
+        img_bytes = buf.getvalue()
+    base64img = base64.b64encode(img_bytes).decode('utf-8')
+    header = 'data:image/png;base64,' if img_bytes[:4] == b'\x89PNG' else 'data:image/jpeg;base64,'
+    if len(base64img) > 133333: # ~100KB
+        base64img = base64img[:133333]
+    results.append(header + base64img)
+
+    # 6. Customer ID with most appearances and total spending
+    cust_freq = df['customer_id'].value_counts()
+    if cust_freq.empty:
+        most_freq_cust = None
+        total_spent = None
+    else:
+        most_freq_cust_id = cust_freq.idxmax()
+        customer_rows = df[df['customer_id'] == most_freq_cust_id]
+        total_spent = float(round(customer_rows['revenue'].sum(),2))
+        most_freq_cust = {'customer_id': most_freq_cust_id, 'total_spent': total_spent}
+    results.append(most_freq_cust)
+
+    # Output as JSON array
+    print(json.dumps(results, indent=2))
+
+if __name__ == "__main__":
+    main()
+
+Execution Output:
+
+
+Execution Errors:
+Traceback (most recent call last):
+  File "/var/folders/92/b68_khx558107yt57k6g6f580000gn/T/tmp8w02oytc/analysis.py", line 142, in <module>
+    main()
+  File "/var/folders/92/b68_khx558107yt57k6g6f580000gn/T/tmp8w02oytc/analysis.py", line 139, in main
+    print(json.dumps(results, indent=2))
+  File "/Users/Vaibhav/.local/share/uv/python/cpython-3.10.17-macos-aarch64-none/lib/python3.10/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+  File "/Users/Vaibhav/.local/share/uv/python/cpython-3.10.17-macos-aarch64-none/lib/python3.10/json/encoder.py", line 201, in encode
+    chunks = list(chunks)
+  File "/Users/Vaibhav/.local/share/uv/python/cpython-3.10.17-macos-aarch64-none/lib/python3.10/json/encoder.py", line 429, in _iterencode
+    yield from _iterencode_list(o, _current_indent_level)
+  File "/Users/Vaibhav/.local/share/uv/python/cpython-3.10.17-macos-aarch64-none/lib/python3.10/json/encoder.py", line 325, in _iterencode_list
+    yield from chunks
+  File "/Users/Vaibhav/.local/share/uv/python/cpython-3.10.17-macos-aarch64-none/lib/python3.10/json/encoder.py", line 405, in _iterencode_dict
+    yield from chunks
+  File "/Users/Vaibhav/.local/share/uv/python/cpython-3.10.17-macos-aarch64-none/lib/python3.10/json/encoder.py", line 438, in _iterencode
+    o = _default(o)
+  File "/Users/Vaibhav/.local/share/uv/python/cpython-3.10.17-macos-aarch64-none/lib/python3.10/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bool is not JSON serializable

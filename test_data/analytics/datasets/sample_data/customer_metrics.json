@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "report_date": "2024-02-03",
+    "total_customers": 20,
+    "analysis_period": "2024-01-15 to 2024-02-03"
+  },
+  "customer_segments": [
+    {
+      "segment": "Premium",
+      "customer_count": 5,
+      "avg_order_value": 749.99,
+      "total_revenue": 3749.95,
+      "customers": ["C001", "C005", "C009", "C016", "C017"]
+    },
+    {
+      "segment": "Standard",
+      "customer_count": 10,
+      "avg_order_value": 299.99,
+      "total_revenue": 2999.90,
+      "customers": ["C002", "C003", "C006", "C007", "C010", "C013", "C014", "C015", "C018", "C019"]
+    },
+    {
+      "segment": "Budget",
+      "customer_count": 5,
+      "avg_order_value": 149.99,
+      "total_revenue": 749.95,
+      "customers": ["C004", "C008", "C011", "C012", "C020"]
+    }
+  ],
+  "regional_performance": {
+    "North": {
+      "total_sales": 2529.95,
+      "customer_count": 5,
+      "top_product": "Laptop Pro"
+    },
+    "South": {
+      "total_sales": 1889.92,
+      "customer_count": 5,
+      "top_product": "Headphones"
+    },
+    "East": {
+      "total_sales": 1909.93,
+      "customer_count": 5,
+      "top_product": "Tablet"
+    },
+    "West": {
+      "total_sales": 2179.94,
+      "customer_count": 5,
+      "top_product": "Graphics Card"
+    }
+  },
+  "product_categories": {
+    "Electronics": {
+      "total_revenue": 4969.84,
+      "units_sold": 191,
+      "avg_price": 399.99
+    },
+    "Furniture": {
+      "total_revenue": 2659.94,
+      "units_sold": 32,
+      "avg_price": 499.99
+    },
+    "Appliances": {
+      "total_revenue": 1879.93,
+      "units_sold": 81,
+      "avg_price": 129.99
+    }
+  },
+  "top_customers": [
+    {
+      "customer_id": "C017",
+      "total_spent": 899.99,
+      "orders": 1,
+      "region": "North"
+    },
+    {
+      "customer_id": "C001",
+      "total_spent": 1299.99,
+      "orders": 1,
+      "region": "North"
+    },
+    {
+      "customer_id": "C005",
+      "total_spent": 799.99,
+      "orders": 1,
+      "region": "North"
+    },
+    {
+      "customer_id": "C020",
+      "total_spent": 749.99,
+      "orders": 1,
+      "region": "West"
+    },
+    {
+      "customer_id": "C016",
+      "total_spent": 699.99,
+      "orders": 1,
+      "region": "West"
+    }
+  ]
+}

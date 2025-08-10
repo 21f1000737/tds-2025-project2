@@ -1,0 +1,21 @@
+product_id,product_name,category,price,quantity_sold,sale_date,customer_id,region
+1,Laptop Pro,Electronics,1299.99,15,2024-01-15,C001,North
+2,Wireless Mouse,Electronics,29.99,45,2024-01-16,C002,South
+3,Office Chair,Furniture,249.99,8,2024-01-17,C003,East
+4,Coffee Maker,Appliances,89.99,22,2024-01-18,C004,West
+5,Smartphone,Electronics,799.99,12,2024-01-19,C005,North
+6,Desk Lamp,Furniture,59.99,18,2024-01-20,C006,South
+7,Tablet,Electronics,399.99,20,2024-01-21,C007,East
+8,Blender,Appliances,119.99,14,2024-01-22,C008,West
+9,Gaming Monitor,Electronics,549.99,9,2024-01-23,C009,North
+10,Ergonomic Keyboard,Electronics,149.99,25,2024-01-24,C010,South
+11,Standing Desk,Furniture,599.99,6,2024-01-25,C011,East
+12,Air Fryer,Appliances,159.99,16,2024-01-26,C012,West
+13,Webcam HD,Electronics,79.99,30,2024-01-27,C013,North
+14,Bookshelf,Furniture,199.99,11,2024-01-28,C014,South
+15,Microwave,Appliances,179.99,19,2024-01-29,C015,East
+16,Graphics Card,Electronics,699.99,7,2024-01-30,C016,West
+17,Sofa,Furniture,899.99,3,2024-01-31,C017,North
+18,Dishwasher,Appliances,549.99,5,2024-02-01,C018,South
+19,Headphones,Electronics,199.99,28,2024-02-02,C019,East
+20,Dining Table,Furniture,749.99,4,2024-02-03,C020,West

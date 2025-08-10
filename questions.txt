@@ -1,0 +1,8 @@
+Analyze the provided sales data (CSV) and customer metrics (JSON) to answer the following questions and respond with a JSON array containing the answers.
+
+1. What is the total revenue across all products in the sales data?
+2. Which product category (Electronics, Furniture, Appliances) has the highest average price per unit?
+3. What is the top-selling region by total quantity sold?
+4. Compare the customer segment data from the JSON with actual sales data - do the revenue figures match?
+5. Create a bar chart showing revenue by product category from the CSV data. Return as base64 data URI under 100KB.
+6. Which customer ID appears most frequently in the sales data and what is their total spending?
